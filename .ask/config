@@ -1,9 +1,33 @@
 {
   "deploy_settings": {
     "default": {
-      "skill_id": "",
+      "skill_id": "amzn1.ask.skill.35c1596f-344f-4670-b7f4-665b2c8cd8fd",
       "was_cloned": false,
-      "merge": {}
+      "merge": {},
+      "resources": {
+        "manifest": {
+          "eTag": "f52863a95aca82560fdf8c25f0a9c9bd"
+        },
+        "interactionModel": {
+          "en-US": {
+            "eTag": "56bdd182239de9013331b921cb278778"
+          }
+        },
+        "lambda": [
+          {
+            "alexaUsage": [
+              "custom/default"
+            ],
+            "arn": "arn:aws:lambda:us-east-1:837782226885:function:ask-custom-Password_Safe-default",
+            "awsRegion": "us-east-1",
+            "codeUri": "lambda/custom",
+            "functionName": "ask-custom-Password_Safe-default",
+            "handler": "index.handler",
+            "revisionId": "54e17dc0-a9a7-4f1d-9d98-30df5aee3357",
+            "runtime": "nodejs8.10"
+          }
+        ]
+      }
     }
   }
 }

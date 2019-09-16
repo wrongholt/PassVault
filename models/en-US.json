@@ -1,27 +1,142 @@
 {
-  "interactionModel": {
-    "languageModel": {
-      "invocationName": "hello world",
-      "intents": [
-        {
-          "name": "AMAZON.CancelIntent",
-          "samples": []
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "password vault",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "SavePassIntent",
+                    "slots": [
+                        {
+                            "name": "pass",
+                            "type": "AMAZON.Room",
+                            "samples": [
+                                "My password is {pass}",
+                                "{pass}"
+                            ]
+                        },
+                        {
+                            "name": "username",
+                            "type": "AMAZON.Person",
+                            "samples": [
+                                "The Passwords name is {username}",
+                                "{username}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "save"
+                    ]
+                },
+                {
+                    "name": "ShowPassIntent",
+                    "slots": [
+                        {
+                            "name": "username",
+                            "type": "AMAZON.Person",
+                            "samples": [
+                                "Get the password for {username}",
+                                "{username}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "show {username}",
+                        "show"
+                    ]
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                }
+            ],
+            "types": []
         },
-        {
-          "name": "AMAZON.HelpIntent",
-          "samples": []
+        "dialog": {
+            "intents": [
+                {
+                    "name": "SavePassIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "pass",
+                            "type": "AMAZON.Room",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.970591756168.435761129259"
+                            }
+                        },
+                        {
+                            "name": "username",
+                            "type": "AMAZON.Person",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.965086453214.919629172904"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "ShowPassIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "username",
+                            "type": "AMAZON.Person",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.128821762831.657020644659"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
         },
-        {
-          "name": "AMAZON.StopIntent",
-          "samples": []
-        },
-        {
-          "name": "HelloWorldIntent",
-          "samples": [
-            "hello"
-          ]
-        }
-      ]
+        "prompts": [
+            {
+                "id": "Elicit.Slot.970591756168.435761129259",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Let me know the password when you are alone."
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.965086453214.919629172904",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What do you want to label this password as?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.128821762831.657020644659",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the name of your password?"
+                    }
+                ]
+            }
+        ]
     }
-  }
 }

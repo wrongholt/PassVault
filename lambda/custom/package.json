@@ -1,5 +1,5 @@
 {
-  "name": "hello-world",
+  "name": "password-vault",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,7 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ask-sdk-core": "^2.0.0",
+    "ask-sdk-core": "^2.5.2",
+    "ask-sdk-dynamodb-persistence-adapter": "^2.5.2",
     "ask-sdk-model": "^1.0.0"
   }
 }
