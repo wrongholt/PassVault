@@ -4,7 +4,6 @@
 var crypto = require('crypto');
 const Alexa = require('ask-sdk-core');
 const Adapter = require('ask-sdk-dynamodb-persistence-adapter');
-const dbHelper = require('./dbHelper');
 const algorithm = 'aes-256-cbc';
 const key = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
@@ -36,29 +35,24 @@ const SavePasswordIntentHandler = {
     const {
       responseBuilder
     } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId;
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const passWD = slots.pass.value;
-    console.log(passWD)
     const userName = slots.username.value;
     var newPassword = encrypt(passWD);
-    console.log(newPassword)
-    return dbHelper.addPass(newPassword, userName, userID)
-      .then((data) => {
-          const speechText = `Your password, ${userName} has been saved.`;
-          return responseBuilder
-            .speak(speechText)
-            .withSimpleCard('Hello World', speechText)
-            .getResponse();
-      })
-      .catch((err) => {
-        console.log("Error saving the password", err);
-        const speechText = `We're having troubles saving the passwords right now please try again later.`;
+    const attributesManager = handlerInput.attributesManager;    
+    const attributes = await attributesManager.getPersistentAttributes() || {};
+    attributes[userName] = {
+      encryptedPassword:newPassword
+    };
+
+    attributesManager.setPersistentAttributes(attributes);
+    await attributesManager.savePersistentAttributes();  
+          const speechText = `Your password, for ${userName} has been saved.`;
+              
         return responseBuilder
           .speak(speechText)
-          .withSimpleCard('Hello World', speechText)
+          .withSimpleCard(speechText)
           .getResponse();
-      })
   },
 };
 
@@ -74,20 +68,24 @@ const ShowPasswordIntentHandler = {
     const userID = handlerInput.requestEnvelope.context.System.user.userId;
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const userName = slots.username.value;
-    return dbHelper.getPass(userName, userID)
-      .then((data) => {
-        var passWD =  decrypt(data);
-        const speechText = `Here is your Password with name of ${userName}. ${passWD}`;
+    
+    const attributesManager = handlerInput.attributesManager;    
+    const attributes = await attributesManager.getPersistentAttributes() || {};
+    
+    if(userName == Object.keys(attributes)){
+      var currentEncryptedPass = attributes[userName].encryptedPassword;
+      var currentName = attributes[userName];
+      var speechText = `Here is your Password with name of ${currentName}. ${passWD}`;
+
+    }else{
+      var speechText = `You do not have Password with name of ${currentName}, you can add it by saying add`;
+    }
+    var passWD =  decrypt(currentEncryptedPass);
+     
         return responseBuilder
           .speak(speechText)
           .getResponse();
-      })
-      .catch((err) => {
-        const speechText = `You do not have Password with name of ${userName}, you can add it by saying add`
-        return responseBuilder
-          .speak(speechText)
-          .getResponse();
-      })
+    
   },
 };
 const InProgressRemovePasswordIntentHandler = {
@@ -102,8 +100,8 @@ const InProgressRemovePasswordIntentHandler = {
     return handlerInput.responseBuilder
       .addDelegateDirective(currentIntent)
       .getResponse();
-  }
-}
+  },
+};
 
 const RemovePasswordIntentHandler = {
   canHandle(handlerInput) {
@@ -116,24 +114,25 @@ const RemovePasswordIntentHandler = {
     } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId;
     const slots = handlerInput.requestEnvelope.request.intent.slots;
-    const userName = slots.username.value;
-    return dbHelper.removePass(userName, userID)
-      .then((data) => {
-        const speechText = `You have removed Password with name of ${userName}, you can add another one by saying add`
+    const userName = slots.username.value;   
+    const attributesManager = handlerInput.attributesManager;    
+    const attributes = await attributesManager.getPersistentAttributes() || {};  
+    if( Object.keys(attributes).indexOf( userName ) >= 0 ) {
+      delete attributes[username];
+    var speechText = `You have removed Password with name of ${userName}, you can add another one by saying add`;
+    }else{
+      var speechText = `You do not have Password with name of ${userName}, you can add it by saying add`;
+    }
+    attributesManager.setPersistentAttributes(attributes);
+    await attributesManager.savePersistentAttributes();  
+
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
           .getResponse();
-      })
-      .catch((err) => {
-        const speechText = `You do not have Password with name of ${userName}, you can add it by saying add`
-        return responseBuilder
-          .speak(speechText)
-          .reprompt(GENERAL_REPROMPT)
-          .getResponse();
-      })
-  }
-}
+      
+  },
+};
 const HelpIntentHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
