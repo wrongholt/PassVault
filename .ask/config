@@ -23,7 +23,7 @@
             "codeUri": "lambda/custom",
             "functionName": "ask-custom-Password_Safe-default",
             "handler": "index.handler",
-            "revisionId": "54e17dc0-a9a7-4f1d-9d98-30df5aee3357",
+            "revisionId": "8d046028-4681-43aa-b32e-cdf117c2c6f0",
             "runtime": "nodejs8.10"
           }
         ]
